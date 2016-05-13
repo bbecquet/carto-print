@@ -1,0 +1,33 @@
+{
+  "name": "carto-print",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "babel": "babel ./src/ --out-dir ./dist --source-maps",
+    "babel:watch": "babel ./src/ --out-dir ./dist --watch",
+    "browserify": "browserify ./dist/main.js -o ./build/main.js --standalone carto-print",
+    "build": "npm run babel && npm run browserify",
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^3.5.17",
+    "d3-geo-projection": "^0.2.16",
+    "jquery": "^2.2.3",
+    "lodash": "^4.12.0",
+    "topojson": "^1.6.26"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.7.5",
+    "babel-eslint": "^6.0.2",
+    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-plugin-transform-class-properties": "^6.6.0",
+    "babel-plugin-transform-object-assign": "^6.5.0",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-register": "^6.7.2",
+    "browserify": "^13.0.0",
+    "chai": "^3.5.0",
+    "eslint": "^2.7.0"
+  }
+}

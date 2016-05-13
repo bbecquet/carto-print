@@ -1,0 +1,22 @@
+
+body {
+  background: #fcfcfa;
+}
+
+.navbar-form .form-control {
+  width: 80px;
+}
+
+@font-face {
+    font-family: 'League Gothic';
+    font-style: normal;
+    font-weight: normal;
+    src: url('/fonts/League_Gothic-webfont.eot') format('embedded-opentype'),
+         url('/fonts/League_Gothic-webfont.woff') format('woff'),
+         url('/fonts/League_Gothic-webfont.ttf') format('truetype'),
+         url('/fonts/League_Gothic-webfont.svg#LeagueGothicRegular') format('svg');
+}
+
+text {
+    font-family:"League Gothic", sans-serif;
+}
