@@ -6,8 +6,8 @@
   "scripts": {
     "babel": "babel ./src/ --out-dir ./dist --source-maps",
     "babel:watch": "babel ./src/ --out-dir ./dist --watch",
-    "browserify": "browserify ./dist/main.js -o ./build/main.js --standalone carto-print",
-    "build": "npm run babel && npm run browserify",
+    "browserify": "browserify ./dist/main.js -o ./build/main.js --standalone cartoPrint",
+    "build": "npm run babel && npm run browserify"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,16 @@
     "jquery": "^2.2.3",
     "lodash": "^4.12.0",
     "topojson": "^1.6.26"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "add-module-exports",
+      "transform-class-properties",
+      "transform-object-assign"
+    ]
   },
   "devDependencies": {
     "babel-cli": "^6.7.5",
