@@ -20,3 +20,18 @@ body {
 text {
     font-family:"League Gothic", sans-serif;
 }
+
+.ocean {
+    fill: #93dafb;
+}
+
+.land {
+    fill: #fff6dd;
+}
+
+.country-boundary {
+    fill: none;
+    stroke: #333;
+    stroke-dasharray: 2,2;
+    stroke-linejoin: round;
+}

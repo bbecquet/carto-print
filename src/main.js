@@ -1,4 +1,5 @@
 import d3 from 'd3';
+import topojson from 'topojson';
 
 function draw () {
     //erase previously drawn svg
@@ -15,12 +16,13 @@ function draw () {
     const svgRoot = svg.append("g")
         .attr('clip-path', 'url(#clip)');
 
-    const projection = d3.geo.conicConformal()
-        /*.scale(parseInt($('.js-scale').val()))
-        .translate([parseInt($('.js-center-x').val()), parseInt($('.js-center-y').val())])*/
-        .clipAngle(90);
+    const projection = d3.geo.mercator();
+        // d3.geo.conicConformal()
+        // .scale(parseInt($('.js-scale').val()))
+        // .translate([parseInt($('.js-center-x').val()), parseInt($('.js-center-y').val())])
+        // .clipAngle(90);
 
-    projection.rotate([-2, -47, -3]);
+    window.proj = projection;
 
     /*
     const path = d3.geo.path().pointRadius(function(d) {
@@ -33,15 +35,32 @@ function draw () {
     const path2 = d3.geo.path().pointRadius(1).projection(projection);
 
     //ocean
-    svgRoot.append("rect")
-        .attr('fill', '#0b0')
+    svgRoot.append('rect')
         .attr('width', width)
-        .attr('height', height);
+        .attr('height', height)
+        .attr('class', 'ocean');
 
+    d3.json("world-50m.json", function(error, data) {
+        if (error) return console.error(error);
+        console.log(data);
+
+        svgRoot.append('path')
+            .datum(topojson.mesh(data, data.objects.land))
+            .attr('d', d3.geo.path().projection(projection))
+            .attr('class', 'land');
+
+        svgRoot.append('path')
+            .datum(topojson.mesh(data, data.objects.countries))
+            .attr('d', d3.geo.path().projection(projection))
+            .attr('class', 'country-boundary');
+    });
+
+    /*
     const dataPaths = Object.keys(data);
     dataPaths.forEach(function(dataPath) {
         Layers[dataPath]();
     });
+    */
 }
 
 const Layers = {

@@ -1,14 +1,20 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _d = require("d3");
+var _d = require('d3');
 
 var _d2 = _interopRequireDefault(_d);
 
+var _topojson = require('topojson');
+
+var _topojson2 = _interopRequireDefault(_topojson);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var proj = void 0;
 
 function draw() {
     //erase previously drawn svg
@@ -23,12 +29,13 @@ function draw() {
     //clip container. #clip is a reference to a def that is added at the very last moment to the svg string
     var svgRoot = svg.append("g").attr('clip-path', 'url(#clip)');
 
-    var projection = _d2.default.geo.conicConformal()
-    /*.scale(parseInt($('.js-scale').val()))
-    .translate([parseInt($('.js-center-x').val()), parseInt($('.js-center-y').val())])*/
-    .clipAngle(90);
+    var projection = _d2.default.geo.mercator();
+    // d3.geo.conicConformal()
+    // .scale(parseInt($('.js-scale').val()))
+    // .translate([parseInt($('.js-center-x').val()), parseInt($('.js-center-y').val())])
+    // .clipAngle(90);
 
-    projection.rotate([-2, -47, -3]);
+    proj = projection;
 
     /*
     const path = d3.geo.path().pointRadius(function(d) {
@@ -41,16 +48,23 @@ function draw() {
     var path2 = _d2.default.geo.path().pointRadius(1).projection(projection);
 
     //ocean
-    svgRoot.append("rect").attr('fill', '#0b0').attr('width', width).attr('height', height);
+    svgRoot.append('rect').attr('width', width).attr('height', height).attr('class', 'ocean');
 
-    //graticules
-    var graticule = _d2.default.geo.graticule();
-    svgRoot.append("path").datum(graticule).attr("fill", "none").attr("stroke", "#000").attr("stroke-opacity", ".1").attr("stroke-width", "1").attr("d", path);
+    _d2.default.json("world-50m.json", function (error, data) {
+        if (error) return console.error(error);
+        console.log(data);
 
-    var dataPaths = Object.keys(data);
-    dataPaths.forEach(function (dataPath) {
+        svgRoot.append('path').datum(_topojson2.default.mesh(data, data.objects.land)).attr('d', _d2.default.geo.path().projection(projection)).attr('class', 'land');
+
+        svgRoot.append('path').datum(_topojson2.default.mesh(data, data.objects.countries)).attr('d', _d2.default.geo.path().projection(projection)).attr('class', 'country-boundary');
+    });
+
+    /*
+    const dataPaths = Object.keys(data);
+    dataPaths.forEach(function(dataPath) {
         Layers[dataPath]();
     });
+    */
 }
 
 var Layers = {
@@ -65,7 +79,7 @@ var Layers = {
     }
 
     /*,
-      admin: function() {
+     admin: function() {
         //admin (IDF)
         svgRoot.append("g").attr("id", "idf").selectAll("path")
             .data(data.admin.features, function(d) { return d.geometry.coordinates[0]; })

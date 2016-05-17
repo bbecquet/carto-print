@@ -3,62 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Vector maps</title>
-
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="main.css">
  </head>
 
 <body>
     <nav class="navbar navbar-default" role="navigation">
       <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">LRQDO Vector maps</a>
-        </div>
-
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav js-controls">
-            <!-- <li class="active"><a href="#">Link</a></li> -->
-            <li>
-            <!-- Fr : 4100 360 360 -->
-            <!-- IDF : 39000 160 1600 -->
-                scale
-                <input type="text" class="form-control js-scale" placeholder="scale" value="4100">
-              </li>
-              <li>
-                cx
-                <input type="text" class="form-control js-center-x" placeholder="scale" value="360">
-              </li>
-              <li>
-                cy
-                <input type="text" class="form-control js-center-y" placeholder="scale" value="360">
-            </li>
+            <ul class="nav navbar-nav js-controls">
+                <!-- <li class="active"><a href="#">Link</a></li> -->
+                <li>
+                <!-- Fr : 4100 360 360 -->
+                <!-- IDF : 39000 160 1600 -->
+                    scale
+                    <input type="text" class="form-control js-scale" placeholder="scale" value="4100">
+                  </li>
+                  <li>
+                    cx
+                    <input type="text" class="form-control js-center-x" placeholder="scale" value="360">
+                  </li>
+                  <li>
+                    cy
+                    <input type="text" class="form-control js-center-y" placeholder="scale" value="360">
+                </li>
 
-            <li class="dropdown">
-                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">region <span class="caret"></span></a>
-                     <ul class="dropdown-menu js-region" role="menu">
-                       <li><a href="#">Europe</a></li>
-                       <li><a href="#">France</a></li>
-                       <li><a href="#">IDF</a></li>
-                     </ul>
-                   </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">region <span class="caret"></span></a>
+                    <ul class="dropdown-menu js-region" role="menu">
+                        <li><a href="#">Europe</a></li>
+                        <li><a href="#">France</a></li>
+                        <li><a href="#">IDF</a></li>
+                    </ul>
+                </li>
+            </ul>
 
-          </ul>
-
-          <ul class="nav navbar-form navbar-right">
-            <li>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-default js-save">Save as .SVG</button>
-                </div>
-            </li>
-          </ul>
+            <ul class="nav navbar-form navbar-right">
+                <li>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default js-save">Save as .SVG</button>
+                    </div>
+                </li>
+            </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
