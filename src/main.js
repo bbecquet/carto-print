@@ -1,28 +1,37 @@
 import d3 from 'd3';
 import topojson from 'topojson';
 
-function draw () {
-    //erase previously drawn svg
-    d3.select("svg").remove();
-    const width = 500, //style.viewport.width,
-        height = 300; //style.viewport.height;
 
-    //create svg element
+function draw () {
+    const width = 800;
+    const height = 500;
+
+    d3.select("svg").remove();
     const svg = d3.select("body").append("svg")
-        .attr("width", width)
-        .attr("height", height);
+        .attr({width, height});
 
     //clip container. #clip is a reference to a def that is added at the very last moment to the svg string
     const svgRoot = svg.append("g")
         .attr('clip-path', 'url(#clip)');
+
+    const zoom = d3.behavior.zoom()
+        .scaleExtent([1, 8])
+        .on("zoom", zoomed);
+
+    svg
+        .call(zoom)
+        .call(zoom.event);
+
+    function zoomed() {
+        svgRoot.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
+
 
     const projection = d3.geo.mercator();
         // d3.geo.conicConformal()
         // .scale(parseInt($('.js-scale').val()))
         // .translate([parseInt($('.js-center-x').val()), parseInt($('.js-center-y').val())])
         // .clipAngle(90);
-
-    window.proj = projection;
 
     /*
     const path = d3.geo.path().pointRadius(function(d) {
@@ -36,9 +45,11 @@ function draw () {
 
     //ocean
     svgRoot.append('rect')
-        .attr('width', width)
-        .attr('height', height)
-        .attr('class', 'ocean');
+        .attr({
+            width,
+            height,
+            'class': 'ocean'
+        });
 
     d3.json("world-50m.json", function(error, data) {
         if (error) return console.error(error);

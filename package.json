@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "babel": "babel ./src/ --out-dir ./dist --source-maps",
+    "babel": "babel ./src/ --out-dir ./dist",
     "babel:watch": "babel ./src/ --out-dir ./dist --watch",
     "browserify": "browserify ./dist/main.js -o ./build/main.js --standalone cartoPrint",
     "build": "npm run babel && npm run browserify"

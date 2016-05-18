@@ -15,28 +15,29 @@ var _topojson2 = _interopRequireDefault(_topojson);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var proj = void 0;
-
 function draw() {
-    //erase previously drawn svg
-    _d2.default.select("svg").remove();
-    var width = 500,
-        //style.viewport.width,
-    height = 300; //style.viewport.height;
+    var width = 800;
+    var height = 500;
 
-    //create svg element
-    var svg = _d2.default.select("body").append("svg").attr("width", width).attr("height", height);
+    _d2.default.select("svg").remove();
+    var svg = _d2.default.select("body").append("svg").attr({ width: width, height: height });
 
     //clip container. #clip is a reference to a def that is added at the very last moment to the svg string
     var svgRoot = svg.append("g").attr('clip-path', 'url(#clip)');
+
+    var zoom = _d2.default.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoomed);
+
+    svg.call(zoom).call(zoom.event);
+
+    function zoomed() {
+        svgRoot.attr("transform", "translate(" + _d2.default.event.translate + ")scale(" + _d2.default.event.scale + ")");
+    }
 
     var projection = _d2.default.geo.mercator();
     // d3.geo.conicConformal()
     // .scale(parseInt($('.js-scale').val()))
     // .translate([parseInt($('.js-center-x').val()), parseInt($('.js-center-y').val())])
     // .clipAngle(90);
-
-    proj = projection;
 
     /*
     const path = d3.geo.path().pointRadius(function(d) {
@@ -49,7 +50,11 @@ function draw() {
     var path2 = _d2.default.geo.path().pointRadius(1).projection(projection);
 
     //ocean
-    svgRoot.append('rect').attr('width', width).attr('height', height).attr('class', 'ocean');
+    svgRoot.append('rect').attr({
+        width: width,
+        height: height,
+        'class': 'ocean'
+    });
 
     _d2.default.json("world-50m.json", function (error, data) {
         if (error) return console.error(error);
