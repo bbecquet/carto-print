@@ -22,14 +22,20 @@ text {
 }
 
 .ocean {
-    fill: #93dafb;
+    background-color: #93dafb;
 }
 
 .land {
     fill: #fff6dd;
+    stroke: #00F;
 }
 
 .country-boundary {
+    fill: none;
+    stroke: #333;
+}
+
+.region-boundary {
     fill: none;
     stroke: #333;
     stroke-dasharray: 2,2;

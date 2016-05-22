@@ -1,13 +1,15 @@
 import d3 from 'd3';
 import topojson from 'topojson';
-
+import Layer from './Layer.js';
 
 function draw () {
     const width = 800;
     const height = 500;
 
     d3.select("svg").remove();
+
     const svg = d3.select("body").append("svg")
+        .attr('class', 'ocean')
         .attr({width, height});
 
     //clip container. #clip is a reference to a def that is added at the very last moment to the svg string
@@ -18,16 +20,16 @@ function draw () {
         .scaleExtent([1, 8])
         .on("zoom", zoomed);
 
-    svg
-        .call(zoom)
+    svg.call(zoom)
         .call(zoom.event);
 
     function zoomed() {
         svgRoot.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
 
-
-    const projection = d3.geo.mercator();
+    const projection = d3.geo.mercator()
+        .center([2.35, 48.85])
+        .scale(500);
         // d3.geo.conicConformal()
         // .scale(parseInt($('.js-scale').val()))
         // .translate([parseInt($('.js-center-x').val()), parseInt($('.js-center-y').val())])
@@ -41,72 +43,55 @@ function draw () {
     }).projection(projection);
     */
 
-    const path2 = d3.geo.path().pointRadius(1).projection(projection);
+    const layers = [];
+    layers.push(new Layer({
+        id: 'land',
+        source: 'data/world-50m.json',
+        objectName: 'land',
+        attrs: {
+            'class': 'land'
+        }
+    }));
+    // layers.push(new Layer({
+    //     id: 'countries',
+    //     source: 'data/world-50m.json',
+    //     objectName: 'countries',
+    //     attrs: {
+    //         'class': 'country-boundary'
+    //     }
+    // }));
+    layers.push(new Layer({
+        id: 'regions',
+        source: 'data/regions_filtered.topojson',
+        objectName: 'regions_filtered',
+        attrs: {
+            'class': 'region-boundary'
+        }
+    }));
 
-    //ocean
-    svgRoot.append('rect')
-        .attr({
-            width,
-            height,
-            'class': 'ocean'
-        });
-
-    d3.json("world-50m.json", function(error, data) {
-        if (error) return console.error(error);
-        console.log(data);
-
-        svgRoot.append('path')
-            .datum(topojson.mesh(data, data.objects.land))
-            .attr('d', d3.geo.path().projection(projection))
-            .attr('class', 'land');
-
-        svgRoot.append('path')
-            .datum(topojson.mesh(data, data.objects.countries))
-            .attr('d', d3.geo.path().projection(projection))
-            .attr('class', 'country-boundary');
-    });
-
-    /*
-    const dataPaths = Object.keys(data);
-    dataPaths.forEach(function(dataPath) {
-        Layers[dataPath]();
-    });
-    */
+    layers.forEach(l => l.draw(svgRoot, projection));
 }
 
-const Layers = {
-    land: function() {
-        //land
-        svgRoot.append("g").attr("id", "countries").selectAll("path")
-            .data(data.land.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .attr("fill", function(d) {
-                if (['France','Germany','United Kingdom', 'Spain', 'Belgium', 'Italy'].indexOf(d.properties.admin) > -1 ) {
-                    return '#F4783D';
-                }
-                return '#FFF';
-            } )
-            .attr("stroke", '#FFF')
-            .attr("stroke-width", 2)
-            .attr("stroke-opacity", 1);
-    }
-
-    /*,
-
-    admin: function() {
-        //admin (IDF)
-        svgRoot.append("g").attr("id", "idf").selectAll("path")
-            .data(data.admin.features, function(d) { return d.geometry.coordinates[0]; })
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .attr("fill", "none")
-            .attr("stroke", style.region.outline)
-            .attr("stroke-width", style.region.outlineWidth );
-    }*/
-};
+// TODO: reprendre idée avec tableau
+// const Layers = {
+//     land: function() {
+//         //land
+//         svgRoot.append("g").attr("id", "countries").selectAll("path")
+//             .data(data.land.features)
+//             .enter()
+//             .append("path")
+//             .attr("d", path)
+//             .attr("fill", function(d) {
+//                 if (['France','Germany','United Kingdom', 'Spain', 'Belgium', 'Italy'].indexOf(d.properties.admin) > -1 ) {
+//                     return '#F4783D';
+//                 }
+//                 return '#FFF';
+//             } )
+//             .attr("stroke", '#FFF')
+//             .attr("stroke-width", 2)
+//             .attr("stroke-opacity", 1);
+//     }
+// };
 
 const app = {
     draw

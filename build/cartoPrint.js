@@ -10106,6 +10106,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _d = require('d3');
 
 var _d2 = _interopRequireDefault(_d);
@@ -10116,13 +10118,87 @@ var _topojson2 = _interopRequireDefault(_topojson);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Layer = function () {
+    function Layer(options) {
+        _classCallCheck(this, Layer);
+
+        this.data = null;
+        this.id = options.id;
+        this.sourceUrl = options.source;
+        this.attrs = options.attrs || {};
+        this.objectName = options.objectName;
+    }
+
+    _createClass(Layer, [{
+        key: '_loadSource',
+        value: function _loadSource(cb) {
+            var _this = this;
+
+            _d2.default.json(this.sourceUrl, function (error, data) {
+                if (error) {
+                    return console.error(error);
+                }
+                _this.data = data;
+                cb();
+            });
+        }
+    }, {
+        key: 'draw',
+        value: function draw(svg, projection) {
+            var _this2 = this;
+
+            this.node = _d2.default.select('#' + this.id);
+            if (this.node.empty()) {
+                this.node = svg.append('path').attr('id', this.id);
+            }
+            if (!this.data) {
+                this._loadSource(function () {
+                    _this2.draw(svg, projection);
+                });
+                return;
+            }
+            this.node.datum(_topojson2.default.mesh(this.data, this.data.objects[this.objectName])).attr('d', _d2.default.geo.path().projection(projection)).attr(this.attrs);
+        }
+    }]);
+
+    return Layer;
+}();
+
+;
+
+exports.default = Layer;
+module.exports = exports['default'];
+
+},{"d3":1,"topojson":2}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _d = require('d3');
+
+var _d2 = _interopRequireDefault(_d);
+
+var _topojson = require('topojson');
+
+var _topojson2 = _interopRequireDefault(_topojson);
+
+var _Layer = require('./Layer.js');
+
+var _Layer2 = _interopRequireDefault(_Layer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function draw() {
     var width = 800;
     var height = 500;
 
     _d2.default.select("svg").remove();
 
-    var svg = _d2.default.select("body").append("svg").attr({ width: width, height: height });
+    var svg = _d2.default.select("body").append("svg").attr('class', 'ocean').attr({ width: width, height: height });
 
     //clip container. #clip is a reference to a def that is added at the very last moment to the svg string
     var svgRoot = svg.append("g").attr('clip-path', 'url(#clip)');
@@ -10135,7 +10211,7 @@ function draw() {
         svgRoot.attr("transform", "translate(" + _d2.default.event.translate + ")scale(" + _d2.default.event.scale + ")");
     }
 
-    var projection = _d2.default.geo.mercator().center([2.35, 48.85]).scale(2000);
+    var projection = _d2.default.geo.mercator().center([2.35, 48.85]).scale(500);
     // d3.geo.conicConformal()
     // .scale(parseInt($('.js-scale').val()))
     // .translate([parseInt($('.js-center-x').val()), parseInt($('.js-center-y').val())])
@@ -10149,34 +10225,36 @@ function draw() {
     }).projection(projection);
     */
 
-    var path2 = _d2.default.geo.path().pointRadius(1).projection(projection);
+    var layers = [];
+    layers.push(new _Layer2.default({
+        id: 'land',
+        source: 'data/world-50m.json',
+        objectName: 'land',
+        attrs: {
+            'class': 'land'
+        }
+    }));
+    // layers.push(new Layer({
+    //     id: 'countries',
+    //     source: 'data/world-50m.json',
+    //     objectName: 'countries',
+    //     attrs: {
+    //         'class': 'country-boundary'
+    //     }
+    // }));
+    layers.push(new _Layer2.default({
+        id: 'regions',
+        source: 'data/regions_filtered.topojson',
+        objectName: 'regions_filtered',
+        attrs: {
+            'class': 'region-boundary'
+        }
+    }));
 
-    //ocean
-    svgRoot.append('rect').attr({
-        width: width,
-        height: height,
-        'class': 'ocean'
-    });
-
-    //d3.json("world-50m.json", function(error, data) {
-    _d2.default.json("regions.topojson", function (error, data) {
-        if (error) return console.error(error);
-        console.log(data);
-
-        svgRoot.append('path').datum(_topojson2.default.mesh(data, data.objects.regions)).attr('d', _d2.default.geo.path().projection(projection)).attr('class', 'land country-boundary');
-
-        svgRoot.append('path').datum(_topojson2.default.mesh(data, data.objects.regions)).attr('d', _d2.default.geo.path().projection(projection)).attr('class', 'country-boundary');
+    layers.forEach(function (l) {
+        return l.draw(svgRoot, projection);
     });
 }
-
-var layer = {
-    id: 'plop',
-    source: 'plop.json',
-    type: 'single',
-    filter: function filter(f) {
-        return true;
-    }
-};
 
 // TODO: reprendre idée avec tableau
 // const Layers = {
@@ -10197,20 +10275,6 @@ var layer = {
 //             .attr("stroke-width", 2)
 //             .attr("stroke-opacity", 1);
 //     }
-//
-//     /*,
-//
-//     admin: function() {
-//         //admin (IDF)
-//         svgRoot.append("g").attr("id", "idf").selectAll("path")
-//             .data(data.admin.features, function(d) { return d.geometry.coordinates[0]; })
-//             .enter()
-//             .append("path")
-//             .attr("d", path)
-//             .attr("fill", "none")
-//             .attr("stroke", style.region.outline)
-//             .attr("stroke-width", style.region.outlineWidth );
-//     }*/
 // };
 
 var app = {
@@ -10220,5 +10284,5 @@ var app = {
 exports.default = app;
 module.exports = exports['default'];
 
-},{"d3":1,"topojson":2}]},{},[3])(3)
+},{"./Layer.js":3,"d3":1,"topojson":2}]},{},[3,4])(4)
 });

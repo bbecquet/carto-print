@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "browserify ./src/main.js -o ./build/cartoPrint.js -t babelify --standalone cartoPrint",
+    "build": "browserify ./src/*.js -o ./build/cartoPrint.js -t babelify --standalone cartoPrint",
     "watch": "npm-watch"
   },
   "author": "",
